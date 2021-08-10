@@ -1,16 +1,22 @@
-# shadow-reagent
+# porkostomus/graph
 
-Like the [official quickstart](https://github.com/thheller/shadow-cljs), but without the extra steps.
+## Rationale
+
+I have a theory. And a secret.
+
+### Theory
+
+I really, really love working with SVG in cljs and I think it's a potential superpower. Since it is so easy to manipulate data in Clojure, and SVG is just declarative data, I believe that it can be 100% feasible to implement many ad-hoc graphical solutions for which would be commonly thought you'd need to reach for a library like graphviz.
+
+### Secret
+
+I actually had so much of a pain trying to get GraphViz to work in Reagent that I gave up and decided to just do my own thing by reverse-engineering their SVG output.
+
+I can also now attempt to mentally justify this decision by telling myself that it would have been stupid to compile a C++ program written in the 1970s into JavaScript with Emscripten, just to render a few shapes.
 
 ## Development
 
-You'll likely want to change the name from `shadow-reagent` to whatever your project is called. Here's where you need to do that:
-
-1. In the `shadow-cljs.edn` file in the project root (so your `init` fn will be called)
-2. Rename the directory in the `src` path (inside the project root)- *make sure to change hyphens (-) to underscores (_).*
-3. In the `ns` macro at the top of `app.cljs`
-
-Now you can do the thing:
+Do the thing:
 
 ```bash
 $ npm install

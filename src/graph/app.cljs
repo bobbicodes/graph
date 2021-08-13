@@ -56,23 +56,23 @@
    :14 {}
    :15 {}})
 
-(defn parent [node tree]
-  (first (filter #(contains? (get tree %) node) (keys tree))))
+#_(defn parent [node tree]
+    (first (filter #(contains? (get tree %) node) (keys tree))))
 
-(parent :2 g3)
+;(parent :2 g3)
 
-(defn node-depth [node tree]
-  (loop [n node parents []]
-    (if (nil? (parent n tree))
-      (count parents)
-      (recur (parent n tree) (conj parents (parent n tree))))))
+#_(defn node-depth [node tree]
+    (loop [n node parents []]
+      (if (nil? (parent n tree))
+        (count parents)
+        (recur (parent n tree) (conj parents (parent n tree))))))
 
-(node-depth :8 g3)
+;(node-depth :8 g3)
 
-(defn tree-height [tree]
-  (inc (apply max (map #(node-depth % tree) (keys tree)))))
+#_(defn tree-height [tree]
+    (inc (apply max (map #(node-depth % tree) (keys tree)))))
 
-(tree-height g3)
+;(tree-height g3)
 
 (defn leaf-nodes [tree]
   (filter #(empty? (get tree %)) (keys tree)))
@@ -85,20 +85,40 @@
 (filter (fn [[node children]] (seq children)) g3)
 
 (def node-locs
-  [                [273 -279]
+  [[273 -279]
    [215 -192]                            [315 -192]
    [99 -105]        [215 -105]          [315 -105]          [459 -105]
    [27 -18] [99 -18] [171 -18] [243 -18] [315 -18] [387 -18] [459 -18] [531 -18]])
 
+{0 3
+ 1 2
+ 2 2
+ 3 1
+ 4 1
+ 5 1
+ 6 1
+ 7 0
+ 8 0
+ 9 0
+ 10 0
+ 11 0
+ 12 0
+ 13 0
+ 14 0}
+
 (defonce my-nodes (r/atom [1]))
 
-(reset! my-nodes (vec (range 1 16)))
+(reset! my-nodes (vec (range 1 4)))
+
+(- -18 -105)
+(- -105 -192)
+(- -192 -279)
 
 (defn svg-nodes []
   (into [:g]
         (for [node (range (count @my-nodes))]
-          (svg-node (str (get @my-nodes node)) 
-                    (first (get node-locs node)) 
+          (svg-node (str (get @my-nodes node))
+                    (first (get node-locs node))
                     (last (get node-locs node))))))
 
 (defn edge
@@ -109,40 +129,21 @@
     [:path {:fill "none" :stroke "black"
             :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
 
-(edge (get node-locs 0) (get node-locs 1))
+(defn edges [nodes]
+  (for [child (range 1 (count nodes))]
+    [edge (get node-locs (.ceil js/Math (- (/ child 2) 1)))
+     (get node-locs child)]))
 
-(into [:g]
-      (for [node (range (dec (count @my-nodes)))]
-        (edge (get node-locs node) (get node-locs (inc node)))))
-
-(def edges
-  [[edge (get node-locs 0) (get node-locs 1)]
-   [edge (get node-locs 0) (get node-locs 2)]
-   [edge (get node-locs 1) (get node-locs 3)]
-   [edge (get node-locs 1) (get node-locs 4)]
-   [edge (get node-locs 2) (get node-locs 5)]
-   [edge (get node-locs 2) (get node-locs 6)]
-   [edge (get node-locs 3) (get node-locs 7)]
-   [edge (get node-locs 3) (get node-locs 8)]
-   [edge (get node-locs 4) (get node-locs 9)]
-   [edge (get node-locs 4) (get node-locs 10)]
-   [edge (get node-locs 5) (get node-locs 11)]
-   [edge (get node-locs 5) (get node-locs 12)]
-   [edge (get node-locs 6) (get node-locs 13)]
-   [edge (get node-locs 6) (get node-locs 14)]])
-
-(defn dag []
+(defn heap []
   [:svg {:width "100%" :viewBox "0 0 566 305"}
    (into
     [:g {:transform "scale(1,1), rotate(0), translate(4,301)"}
-     (take (dec (count @my-nodes)) edges)
-     [svg-nodes]]
-    )])
-
+     (edges @my-nodes)
+     [svg-nodes]])])
 
 (defn app []
   [:div#app
-   [dag]])
+   [heap]])
 
 (defn render []
   (r/render [app]

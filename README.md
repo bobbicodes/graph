@@ -14,6 +14,20 @@ I actually had so much of a pain trying to get GraphViz to work in Reagent that 
 
 I can also now attempt to mentally justify this decision by telling myself that it would have been stupid to compile a C++ program written in the 1970s into JavaScript with Emscripten, just to render a few shapes.
 
+### Planting the naysayer
+
+> "You have no idea how much work is involved in graph drawing. This is a foolish mission."
+
+Believe me, I'm right with you. I'm not trying to rewrite GraphViz, but for example,
+
+1. Start with simple binary trees. Chances are that's all I want anyway. It can also represent a heap, which I'll be able to use for my visualization of heapsort.
+
+2. Start by only drawing edges as straight lines, seeing how far we can go with that.
+
+The second part of The Algorithm Design Manual contains whole sections on this, one heuristic being to model the edge paths as springs and place them according to what produces the minimal "strain". 
+
+I believe that things like this alone could cover a significant percentage of use cases, and once the appropriate primitives are abstracted, it will pave the way to covering additional ones. 
+
 ## Development
 
 Do the thing:

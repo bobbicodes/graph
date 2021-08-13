@@ -85,7 +85,7 @@
 (filter (fn [[node children]] (seq children)) g3)
 
 (def node-locs
-  [[273 -279]
+  [                [273 -279]
    [215 -192]                            [315 -192]
    [99 -105]        [215 -105]          [315 -105]          [459 -105]
    [27 -18] [99 -18] [171 -18] [243 -18] [315 -18] [387 -18] [459 -18] [531 -18]])
@@ -101,28 +101,43 @@
                     (first (get node-locs node)) 
                     (last (get node-locs node))))))
 
+(defn edge
+  "Takes 2 vector tuples representing x and y points."
+  [from to]
+  (let [x1 (first from) x2 (first to)
+        y1 (last from) y2 (last to)]
+    [:path {:fill "none" :stroke "black"
+            :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
+
+(edge (get node-locs 0) (get node-locs 1))
+
+(into [:g]
+      (for [node (range (dec (count @my-nodes)))]
+        (edge (get node-locs node) (get node-locs (inc node)))))
+
 (def edges
-  [[undirected-edge "M262.362,-262.41L223,-210"]
-   [undirected-edge "M281.098,-261.611L312,-210"]
-   [undirected-edge "M197.382,-178.09L126.919,-122.119"]
-   [undirected-edge "M215,-173.799C215,-162.163 215,-146.548 215,-133.237" "218.5,-133.175 215,-123.175 211.5,-133.175 218.5,-133.175"]
-   [undirected-edge "M315,-173.799C315,-162.163 315,-146.548 315,-133.237" "318.5,-133.175 315,-123.175 311.5,-133.175 318.5,-133.175"]
-   [undirected-edge "M334.721,-179.359C359.603,-164.672 402.56,-139.315 430.879,-122.599" "432.685,-125.597 439.518,-117.5 429.127,-119.569 432.685,-125.597"]
-   [undirected-edge "M86.1278,-88.8037C75.0702,-75.7495 58.9641,-56.7354 46.353,-41.8473" "48.8949,-39.433 39.7607,-34.0647 43.5535,-43.9574 48.8949,-39.433"]
-   [undirected-edge "M99,-86.799C99,-75.1626 99,-59.5479 99,-46.2368" "102.5,-46.1754 99,-36.1754 95.5001,-46.1755 102.5,-46.1754"]
-   [undirected-edge "M206.516,-87.6111C200.186,-75.3817 191.418,-58.4429 184.177,-44.456" "187.163,-42.6103 179.458,-35.3385 180.946,-45.8283 187.163,-42.6103"]
-   [undirected-edge "M220.532,-87.2067C224.444,-75.332 229.768,-59.1684 234.252,-45.5567" "237.675,-46.3514 237.48,-35.7584 231.027,-44.1613 237.675,-46.3514"]
-   [undirected-edge "M315,-86.799C315,-75.1626 315,-59.5479 315,-46.2368" "318.5,-46.1754 315,-36.1754 311.5,-46.1755 318.5,-46.1754"]
-   [undirected-edge "M327.872,-88.8037C338.93,-75.7495 355.036,-56.7354 367.647,-41.8473" "370.446,-43.9574 374.239,-34.0647 365.105,-39.433 370.446,-43.9574"]
-   [undirected-edge "M459,-86.799C459,-75.1626 459,-59.5479 459,-46.2368" "462.5,-46.1754 459,-36.1754 455.5,-46.1755 462.5,-46.1754"]
-   [undirected-edge "M471.872,-88.8037C482.93,-75.7495 499.036,-56.7354 511.647,-41.8473" "514.446,-43.9574 518.239,-34.0647 509.105,-39.433 514.446,-43.9574"]])
+  [[edge (get node-locs 0) (get node-locs 1)]
+   [edge (get node-locs 0) (get node-locs 2)]
+   [edge (get node-locs 1) (get node-locs 3)]
+   [edge (get node-locs 1) (get node-locs 4)]
+   [edge (get node-locs 2) (get node-locs 5)]
+   [edge (get node-locs 2) (get node-locs 6)]
+   [edge (get node-locs 3) (get node-locs 7)]
+   [edge (get node-locs 3) (get node-locs 8)]
+   [edge (get node-locs 4) (get node-locs 9)]
+   [edge (get node-locs 4) (get node-locs 10)]
+   [edge (get node-locs 5) (get node-locs 11)]
+   [edge (get node-locs 5) (get node-locs 12)]
+   [edge (get node-locs 6) (get node-locs 13)]
+   [edge (get node-locs 6) (get node-locs 14)]])
 
 (defn dag []
   [:svg {:width "100%" :viewBox "0 0 566 305"}
    (into
     [:g {:transform "scale(1,1), rotate(0), translate(4,301)"}
+     (take (dec (count @my-nodes)) edges)
      [svg-nodes]]
-    (take (dec (count @my-nodes)) edges))])
+    )])
 
 
 (defn app []

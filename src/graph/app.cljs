@@ -33,8 +33,7 @@
   "Returns the x-coordinate of node n."
   [n]
   (let [row-width (tree-width n)
-        viewbox-width (* 36
-                         (tree-width (count @my-nodes)))]
+        viewbox-width (* 36 (tree-width (count @my-nodes)))]
     (+ (* (/ viewbox-width row-width) (dec (to-the-right n)))
        (/ viewbox-width (* 2 row-width)))))
 
@@ -47,15 +46,13 @@
 (defn node-loc [n]
   [(node-x n) (node-y n)])
 
-(def node-locs
-  (vec (map node-loc (range 1 (inc (count @my-nodes))))))
-
-(defn svg-nodes []
-  (into [:g]
-        (for [node (range (count @my-nodes))]
-          (svg-node (str (get @my-nodes node))
-                    (first (get node-locs node))
-                    (last (get node-locs node))))))
+(defn svg-nodes [nodes]
+  (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
+    (into [:g]
+          (for [node (range (count nodes))]
+            (svg-node (str (get nodes node))
+                      (first (get locs node))
+                      (last (get locs node)))))))
 
 (defn edge
   "Takes 2 vector tuples representing x and y points."
@@ -65,10 +62,13 @@
     [:path {:fill "none" :stroke "black"
             :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
 
-(defn edges [nodes]
+(defn edges 
+  "Draws a line from each child to its parent node."
+  [nodes]
+  (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
   (for [child (range 1 (count nodes))]
-    [edge (get node-locs (.ceil js/Math (- (/ child 2) 1)))
-     (get node-locs child)]))
+    [edge (get locs (.ceil js/Math (- (/ child 2) 1)))
+     (get locs child)])))
 
 (defn heap []
   [:svg {:width "100%"
@@ -92,7 +92,7 @@
                 (= 6 (tree-height (count @my-nodes))) 480
                 :else (* 108 (dec (tree-height (count @my-nodes))))) ")")}
      (edges @my-nodes)
-     [svg-nodes]])])
+     [svg-nodes @my-nodes]])])
 
 (defn app []
   [:div#app

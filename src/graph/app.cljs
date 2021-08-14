@@ -8,17 +8,17 @@
 
 (defonce my-nodes (r/atom (vec (range 1 3))))
 
-(reset! my-nodes (vec (range 1 5)))
+(reset! my-nodes (vec (range 1 28)))
 
 (defn tree-height
-  "Returns the number of levels high a binary heap
+  "Returns the number of levels high a binary tree or heap
    consisting of n elements must be, or what level
    node n is on."
   [n]
   (inc (.floor js/Math (.log2 js/Math n))))
 
 (defn tree-width
-  "Returns the number of nodes wide a binary heap
+  "Returns the number of nodes wide a binary tree or heap
    consisting of n elements must be."
   [n]
   (.pow js/Math 2 (dec (tree-height n))))
@@ -77,7 +77,17 @@
                                    (tree-width (count @my-nodes)))) " "
                        (max 200 (* 110 (dec (tree-height (count @my-nodes))))))}
    (into
-    [:g {:transform (str "scale(1,1), rotate(0), translate(4,"
+    [:g {:transform (str "scale(1,1), rotate(0), translate("
+                         (cond
+                           (= 1 (tree-width (count @my-nodes)))
+                           77
+                           (= 2 (tree-width (count @my-nodes)))
+                           59
+                           (= 4 (tree-width (count @my-nodes)))
+                           27
+                           :else
+                           4) 
+                         ","
                          (cond
                            (= 1 (tree-height (count @my-nodes)))
                            40
@@ -87,6 +97,8 @@
                            300
                            (= 5 (tree-height (count @my-nodes)))
                            390
+                           (= 6 (tree-height (count @my-nodes)))
+                           480
                            :else
                            (* 108 (dec (tree-height (count @my-nodes)))))
                          ")")}

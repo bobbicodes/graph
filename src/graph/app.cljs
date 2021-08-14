@@ -77,31 +77,20 @@
                                    (tree-width (count @my-nodes)))) " "
                        (max 200 (* 110 (dec (tree-height (count @my-nodes))))))}
    (into
-    [:g {:transform (str "scale(1,1), rotate(0), translate("
-                         (cond
-                           (= 1 (tree-width (count @my-nodes)))
-                           77
-                           (= 2 (tree-width (count @my-nodes)))
-                           59
-                           (= 4 (tree-width (count @my-nodes)))
-                           27
-                           :else
-                           4) 
-                         ","
-                         (cond
-                           (= 1 (tree-height (count @my-nodes)))
-                           40
-                           (= 2 (tree-height (count @my-nodes)))
-                           125
-                           (= 4 (tree-height (count @my-nodes)))
-                           300
-                           (= 5 (tree-height (count @my-nodes)))
-                           390
-                           (= 6 (tree-height (count @my-nodes)))
-                           480
-                           :else
-                           (* 108 (dec (tree-height (count @my-nodes)))))
-                         ")")}
+    [:g {:transform
+         (str "scale(1,1), rotate(0), translate("
+              (cond
+                (= 1 (tree-width (count @my-nodes))) 77
+                (= 2 (tree-width (count @my-nodes))) 59
+                (= 4 (tree-width (count @my-nodes))) 27
+                :else 4) ","
+              (cond
+                (= 1 (tree-height (count @my-nodes))) 40
+                (= 2 (tree-height (count @my-nodes))) 125
+                (= 4 (tree-height (count @my-nodes))) 300
+                (= 5 (tree-height (count @my-nodes))) 390
+                (= 6 (tree-height (count @my-nodes))) 480
+                :else (* 108 (dec (tree-height (count @my-nodes))))) ")")}
      (edges @my-nodes)
      [svg-nodes]])])
 

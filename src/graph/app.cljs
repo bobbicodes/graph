@@ -17,7 +17,7 @@
   [n]
   (.pow js/Math 2 (dec (tree-height n))))
 
-(defn to-the-right
+(defn x-pos
   "Returns how many positions to the right a node must be
    in a binary tree or heap."
   [n]
@@ -28,7 +28,7 @@
   [n]
   (let [row-width (tree-width n)
         viewbox-width (* 36 (tree-width (count @my-nodes)))]
-    (+ (* (/ viewbox-width row-width) (dec (to-the-right n)))
+    (+ (* (/ viewbox-width row-width) (dec (x-pos n)))
        (/ viewbox-width (* 2 row-width)))))
 
 (defn node-y

@@ -54,7 +54,8 @@
                       (last (get locs node)))))))
 
 (defn edge
-  "Takes 2 vector tuples representing x and y points."
+  "Takes 2 vector tuples representing x and y points.
+   Outputs an SVG path."
   [from to]
   (let [x1 (first from) x2 (first to) y1 (last from) y2 (last to)]
     [:path {:fill "none" :stroke "black"

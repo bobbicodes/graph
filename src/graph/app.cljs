@@ -84,35 +84,56 @@
 
 (filter (fn [[node children]] (seq children)) g3)
 
-(def node-locs
-  [[273 -279]
-   [215 -192]                            [315 -192]
-   [99 -105]        [215 -105]          [315 -105]          [459 -105]
-   [27 -18] [99 -18] [171 -18] [243 -18] [315 -18] [387 -18] [459 -18] [531 -18]])
-
-{0 3
- 1 2
- 2 2
- 3 1
- 4 1
- 5 1
- 6 1
- 7 0
- 8 0
- 9 0
- 10 0
- 11 0
- 12 0
- 13 0
- 14 0}
-
 (defonce my-nodes (r/atom [1]))
 
-(reset! my-nodes (vec (range 1 4)))
+(reset! my-nodes (vec (range 1 16)))
 
-(- -18 -105)
-(- -105 -192)
-(- -192 -279)
+(- 27 99)
+(- 99 171)
+(- 171 243)
+(/ (- 27 531) 8)
+
+; on what level is the node?
+; bottom level is -18, each one is 87 up from there:
+
+(defn tree-height
+  "Returns the number of levels high a binary heap
+   consisting of n elements must be, or what level
+   node n is on."
+  [n]
+  (inc (.floor js/Math (.log2 js/Math n))))
+
+(defn tree-width
+  "Returns the number of nodes wide a binary heap
+   consisting of n elements must be."
+  [n]
+  (.pow js/Math 2 (dec (tree-height n))))
+
+(defn to-the-right
+  "Returns how many positions to the right a node must be
+   in a binary tree or heap."
+  [n]
+  (inc (mod n (tree-width n))))
+
+(defn node-x
+  "Returns the x-coordinate of node n."
+  [n]
+  (let [row-width (tree-width n)
+        viewbox-width 566]
+    (+ (* (/ viewbox-width row-width) (dec (to-the-right n)))
+       (/ viewbox-width (* 2 row-width)))))
+
+(defn node-y
+  "Returns the y-coordinate of node n."
+  [n]
+  (- -18 (* 87 (- (tree-height (count @my-nodes))
+                  (tree-height n)))))
+
+(defn node-loc [n]
+  [(node-x n) (node-y n)])
+
+(def node-locs
+  (vec (map node-loc (range 1 (inc (count @my-nodes))))))
 
 (defn svg-nodes []
   (into [:g]

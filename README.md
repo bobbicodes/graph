@@ -1,5 +1,9 @@
 # porkostomus/graph
 
+Simple GraphViz-style SVG binary trees/heaps
+
+![Binary tree](./public/img/tree.png)
+
 ## Rationale
 
 I have a theory. And a secret.

@@ -1,13 +1,7 @@
 (ns graph.app
   (:require [reagent.core :as r]))
 
-(defn svg-node [label x y]
-  [:g [:circle {:fill "yellow" :stroke "black" :cx x :cy y :r 18}]
-   [:text {:text-anchor "middle" :x x :y (+ 4 y) :font-family "Monospace"
-           :font-size 14} label]])
-
 (defonce my-nodes (r/atom (vec (range 1 3))))
-
 (reset! my-nodes (vec (range 1 28)))
 
 (defn tree-height
@@ -46,6 +40,11 @@
 (defn node-loc [n]
   [(node-x n) (node-y n)])
 
+(defn svg-node [label x y]
+  [:g [:circle {:fill "yellow" :stroke "black" :cx x :cy y :r 18}]
+   [:text {:text-anchor "middle" :x x :y (+ 4 y) :font-family "Monospace"
+           :font-size 14} label]])
+
 (defn svg-nodes [nodes]
   (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
     (into [:g]
@@ -57,8 +56,7 @@
 (defn edge
   "Takes 2 vector tuples representing x and y points."
   [from to]
-  (let [x1 (first from) x2 (first to)
-        y1 (last from) y2 (last to)]
+  (let [x1 (first from) x2 (first to) y1 (last from) y2 (last to)]
     [:path {:fill "none" :stroke "black"
             :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
 
@@ -66,15 +64,14 @@
   "Draws a line from each child to its parent node."
   [nodes]
   (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
-  (for [child (range 1 (count nodes))]
-    [edge (get locs (.ceil js/Math (- (/ child 2) 1)))
-     (get locs child)])))
+    (for [child (range 1 (count nodes))]
+      [edge (get locs (.ceil js/Math (- (/ child 2) 1)))
+       (get locs child)])))
 
 (defn heap []
   [:svg {:width "100%"
          :viewBox (str "0 0 "
-                       (max 200 (* 36
-                                   (tree-width (count @my-nodes)))) " "
+                       (max 200 (* 36 (tree-width (count @my-nodes)))) " "
                        (max 200 (* 110 (dec (tree-height (count @my-nodes))))))}
    (into
     [:g {:transform

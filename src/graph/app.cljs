@@ -2,7 +2,7 @@
   (:require [reagent.core :as r]))
 
 (defonce my-nodes (r/atom (vec (range 1 3))))
-(reset! my-nodes (vec (range 1 28)))
+(reset! my-nodes (vec (range 1 128)))
 
 (defn tree-height
   "Returns the number of levels high a binary tree or heap
@@ -25,20 +25,20 @@
 
 (defn node-x
   "Returns the x-coordinate of node n."
-  [n]
+  [n nodes]
   (let [row-width (tree-width n)
-        viewbox-width (* 36 (tree-width (count @my-nodes)))]
+        viewbox-width (* 36 (tree-width (count nodes)))]
     (+ (* (/ viewbox-width row-width) (dec (x-pos n)))
        (/ viewbox-width (* 2 row-width)))))
 
 (defn node-y
   "Returns the y-coordinate of node n."
-  [n]
-  (- -18 (* 87 (- (tree-height (count @my-nodes))
+  [n nodes]
+  (- -18 (* 87 (- (tree-height (count nodes))
                   (tree-height n)))))
 
-(defn node-loc [n]
-  [(node-x n) (node-y n)])
+(defn node-loc [n nodes]
+  [(node-x n nodes) (node-y n nodes)])
 
 (defn svg-node [label x y]
   [:g [:circle {:fill "yellow" :stroke "black" :cx x :cy y :r 18}]
@@ -46,7 +46,7 @@
            :font-size 14} label]])
 
 (defn svg-nodes [nodes]
-  (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
+  (let [locs (vec (map #(node-loc % nodes) (range 1 (inc (count nodes)))))]
     (into [:g]
           (for [node (range (count nodes))]
             (svg-node (str (get nodes node))
@@ -58,43 +58,47 @@
    Outputs an SVG path."
   [from to]
   (let [x1 (first from) x2 (first to) y1 (last from) y2 (last to)]
-    [:path {:fill "none" :stroke "black"
+    [:path {:fill "none" :stroke "white"
             :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
 
-(defn edges 
+(defn edges
   "Draws a line from each child to its parent node."
   [nodes]
-  (let [locs (vec (map node-loc (range 1 (inc (count nodes)))))]
+  (let [locs (vec (map #(node-loc % nodes) (range 1 (inc (count nodes)))))]
     (for [child (range 1 (count nodes))]
+      ^{:key child}
       [edge (get locs (.ceil js/Math (- (/ child 2) 1)))
        (get locs child)])))
 
-(defn heap []
+(defn heap [nodes]
   [:svg {:width "100%"
          :viewBox (str "0 0 "
-                       (max 200 (* 36 (tree-width (count @my-nodes)))) " "
-                       (max 200 (* 110 (dec (tree-height (count @my-nodes))))))}
+                       (max 200 (* 36 (tree-width (count nodes)))) " "
+                       (max 200 (* 110 (dec (tree-height (count nodes))))))}
    (into
     [:g {:transform
          (str "scale(1,1), rotate(0), translate("
+              ; x-offsets for specific widths
               (cond
-                (= 1 (tree-width (count @my-nodes))) 77
-                (= 2 (tree-width (count @my-nodes))) 59
-                (= 4 (tree-width (count @my-nodes))) 27
+                (= 1 (tree-width (count nodes))) 77
+                (= 2 (tree-width (count nodes))) 59
+                (= 4 (tree-width (count nodes))) 27
                 :else 4) ","
+              ; y-offsets for specific heights
               (cond
-                (= 1 (tree-height (count @my-nodes))) 40
-                (= 2 (tree-height (count @my-nodes))) 125
-                (= 4 (tree-height (count @my-nodes))) 300
-                (= 5 (tree-height (count @my-nodes))) 390
-                (= 6 (tree-height (count @my-nodes))) 480
-                :else (* 108 (dec (tree-height (count @my-nodes))))) ")")}
-     (edges @my-nodes)
-     [svg-nodes @my-nodes]])])
+                (= 1 (tree-height (count nodes))) 40
+                (= 2 (tree-height (count nodes))) 125
+                (= 4 (tree-height (count nodes))) 300
+                (= 5 (tree-height (count nodes))) 390
+                (= 6 (tree-height (count nodes))) 480
+                :else (* 108 (dec (tree-height (count nodes))))) ")")}
+     (edges nodes)
+     [svg-nodes nodes]])])
+
 
 (defn app []
   [:div#app
-   [heap]])
+   [heap @my-nodes]])
 
 (defn render []
   (r/render [app]

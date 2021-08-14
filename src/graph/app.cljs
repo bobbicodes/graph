@@ -84,17 +84,9 @@
 
 (filter (fn [[node children]] (seq children)) g3)
 
-(defonce my-nodes (r/atom [1]))
+(defonce my-nodes (r/atom (vec (range 1 3))))
 
-(reset! my-nodes (vec (range 1 16)))
-
-(- 27 99)
-(- 99 171)
-(- 171 243)
-(/ (- 27 531) 8)
-
-; on what level is the node?
-; bottom level is -18, each one is 87 up from there:
+(reset! my-nodes (vec (range 1 119)))
 
 (defn tree-height
   "Returns the number of levels high a binary heap
@@ -115,11 +107,14 @@
   [n]
   (inc (mod n (tree-width n))))
 
+(/ 566 8)
+
 (defn node-x
   "Returns the x-coordinate of node n."
   [n]
   (let [row-width (tree-width n)
-        viewbox-width 566]
+        viewbox-width (* 36
+                         (tree-width (count @my-nodes)))]
     (+ (* (/ viewbox-width row-width) (dec (to-the-right n)))
        (/ viewbox-width (* 2 row-width)))))
 
@@ -155,10 +150,28 @@
     [edge (get node-locs (.ceil js/Math (- (/ child 2) 1)))
      (get node-locs child)]))
 
+(tree-height (count @my-nodes))
+
 (defn heap []
-  [:svg {:width "100%" :viewBox "0 0 566 305"}
+  [:svg {:width "100%"
+         :viewBox (str "0 0 "
+                       (max 200 (* 36
+                                   (tree-width (count @my-nodes)))) " "
+                       (max 200 (* 110 (dec (tree-height (count @my-nodes))))))}
    (into
-    [:g {:transform "scale(1,1), rotate(0), translate(4,301)"}
+    [:g {:transform (str "scale(1,1), rotate(0), translate(4,"
+                         (cond
+                           (= 1 (tree-height (count @my-nodes)))
+                           40
+                           (= 2 (tree-height (count @my-nodes)))
+                           125
+                           (= 4 (tree-height (count @my-nodes)))
+                           300
+                           (= 5 (tree-height (count @my-nodes)))
+                           390
+                           :else
+                           (* 108 (dec (tree-height (count @my-nodes)))))
+                         ")")}
      (edges @my-nodes)
      [svg-nodes]])])
 

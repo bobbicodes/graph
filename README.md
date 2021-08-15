@@ -32,6 +32,8 @@ The second part of The Algorithm Design Manual contains whole sections on this, 
 
 I believe that things like this alone could cover a significant percentage of use cases, and once the appropriate primitives are abstracted, it will pave the way to covering additional ones. 
 
+A goal I have in mind would be to move on to free trees and eventually arbitrary graphs. I'd really love to be able to create a mind-map with this to represent knowledge graphs, etc.
+
 ## Development
 
 Do the thing:

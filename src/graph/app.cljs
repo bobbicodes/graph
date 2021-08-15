@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]))
 
 (defonce my-nodes (r/atom (vec (range 1 3))))
-(reset! my-nodes (vec (range 1 128)))
+
+(reset! my-nodes (vec (range 1 12)))
 
 (defn tree-height
   "Returns the number of levels high a binary tree or heap
@@ -79,6 +80,9 @@
     [:g {:transform
          (str "scale(1,1), rotate(0), translate("
               ; x-offsets for specific widths
+              ; TODO: the fact that this is needed means something 
+              ; wasn't parameterized right. But for now this 
+              ; seems to work.
               (cond
                 (= 1 (tree-width (count nodes))) 77
                 (= 2 (tree-width (count nodes))) 59

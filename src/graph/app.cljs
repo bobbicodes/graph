@@ -59,7 +59,7 @@
    Outputs an SVG path."
   [from to]
   (let [x1 (first from) x2 (first to) y1 (last from) y2 (last to)]
-    [:path {:fill "none" :stroke "white"
+    [:path {:fill "none" :stroke "black"
             :d (str "M" x1 "," y1 "L" x2 "," y2)}]))
 
 (defn edges
